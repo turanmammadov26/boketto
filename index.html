@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<title>にほんご カード</title>
+<title>Japanese Cards</title>
 <style>
 :root{--bg:#fafafa;--fg:#111;--mut:#888;--line:rgba(127,127,127,.25);--acc:#111;--onacc:#fff;--btn:#fff;--tgtop:0px;color-scheme:light}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111;--fg:#eee;--mut:#777;--acc:#eee;--onacc:#111;--btn:#1a1a1a;color-scheme:dark}}
@@ -17,8 +17,9 @@ input,select,textarea{background:var(--btn);border:1px solid var(--line);border-
 input:focus,select:focus,textarea:focus{border-color:var(--mut)}
 .wrap{max-width:560px;margin:0 auto;padding:calc(16px + var(--tgtop)) 16px 60px}
 header{margin-bottom:20px}
-h1{font-size:18px;font-weight:600;margin:0 0 12px;letter-spacing:.02em}
-h1 span{color:var(--mut);font-weight:400}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+h1{font-size:18px;font-weight:600;margin:0;letter-spacing:.02em}
+#lang{width:auto;padding:6px 8px;font-size:13px}
 nav{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--line);padding:4px;border-radius:10px}
 nav button{background:none;border:0;color:var(--mut);padding:8px 0;border-radius:7px}
 nav button.on{background:var(--btn);color:var(--fg)}
@@ -59,20 +60,61 @@ kbd{font-size:12px;opacity:.6}
 <body>
 <div class="wrap">
   <header>
-    <h1>にほんご <span>カード</span></h1>
+    <div class="top">
+      <h1 id="title"></h1>
+      <select id="lang">
+        <option value="ja">にほんご</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+      </select>
+    </div>
     <nav>
-      <button data-v="study" class="on">まなぶ</button>
-      <button data-v="dict">じしょ</button>
-      <button data-v="folders">フォルダ</button>
+      <button data-v="study" class="on" id="t-study"></button>
+      <button data-v="dict" id="t-dict"></button>
+      <button data-v="folders" id="t-folders"></button>
     </nav>
   </header>
   <main id="app"></main>
 </div>
 <script>
-const KEY='jpflash.v1', DAY=864e5;
+const KEY='jpflash.v1', LANG_KEY='jpflash.lang', DAY=864e5;
 const TG=window.Telegram?.WebApp;
 const useCloud=!!(TG&&TG.CloudStorage&&TG.isVersionAtLeast&&TG.isVersionAtLeast('6.9'));
 
+/* ---------- языки ---------- */
+const I18N={
+ ja:{title:'にほんご カード',tStudy:'まなぶ',tDict:'じしょ',tFolders:'フォルダ',sp:'',min:'ふん',hour:'じかん',day:'にち',
+  all:'ぜんぶ',left:'のこり',done:'ぜんぶ おぼえました ✓',doneSub:'あたらしい カードや ふくしゅうは あとで でてきます',
+  show:'こたえを みる',again:'もういちど',hard:'むずかしい',good:'まあまあ',easy:'かんたん',
+  word:'ことば',reading:'よみかた（なくても いい）',meaning:'いみ',add:'くわえる',
+  importTitle:'まとめて とうろく',importBtn:'えらんだ フォルダに とうろく',importPh:'ことば | よみかた | いみ',
+  importOk:n=>`${n} こ とうろくしました`,importErr:'かたち：ことば | よみかた | いみ',
+  search:'さがす…',empty:'なにも ありません',newFolder:'あたらしい フォルダ',create:'つくる',noFolders:'フォルダが ありません',
+  cards:'まい',due:'ふくしゅう',newc:'あたらしい',delTitle:'けす',delFolderTitle:'フォルダを けす',
+  confirmDel:n=>`フォルダ「${n}」と カードを けしますか？`,seedFolder:'きほん'},
+ ru:{title:'Японский · Карточки',tStudy:'Учить',tDict:'Словарь',tFolders:'Папки',sp:' ',min:'мин',hour:'ч',day:'дн',
+  all:'Все папки',left:'В очереди',done:'Всё повторено ✓',doneSub:'Новые карточки и повторы появятся позже',
+  show:'Показать ответ',again:'Снова',hard:'Трудно',good:'Хорошо',easy:'Легко',
+  word:'Слово (漢字 / かな)',reading:'Чтение (необязательно)',meaning:'Перевод',add:'Добавить',
+  importTitle:'Импорт списком',importBtn:'Импортировать в выбранную папку',importPh:'слово | чтение | перевод',
+  importOk:n=>`Добавлено слов: ${n}`,importErr:'Формат: слово | чтение | перевод',
+  search:'Поиск…',empty:'Пусто',newFolder:'Новая папка',create:'Создать',noFolders:'Папок нет',
+  cards:'карточек',due:'к повтору',newc:'новых',delTitle:'Удалить',delFolderTitle:'Удалить папку',
+  confirmDel:n=>`Удалить папку «${n}» и все её карточки?`,seedFolder:'Базовые'},
+ en:{title:'Japanese · Cards',tStudy:'Study',tDict:'Dictionary',tFolders:'Folders',sp:' ',min:'min',hour:'h',day:'d',
+  all:'All folders',left:'In queue',done:'All reviewed ✓',doneSub:'New cards and reviews will appear later',
+  show:'Show answer',again:'Again',hard:'Hard',good:'Good',easy:'Easy',
+  word:'Word (漢字 / かな)',reading:'Reading (optional)',meaning:'Meaning',add:'Add',
+  importTitle:'Bulk import',importBtn:'Import into selected folder',importPh:'word | reading | meaning',
+  importOk:n=>`Added words: ${n}`,importErr:'Format: word | reading | meaning',
+  search:'Search…',empty:'Nothing here',newFolder:'New folder',create:'Create',noFolders:'No folders',
+  cards:'cards',due:'due',newc:'new',delTitle:'Delete',delFolderTitle:'Delete folder',
+  confirmDel:n=>`Delete folder "${n}" and all its cards?`,seedFolder:'Basics'}
+};
+let L=localStorage.getItem(LANG_KEY)||'ru';
+const t=k=>(I18N[L]&&I18N[L][k])??I18N.en[k];
+
+/* ---------- утилиты ---------- */
 const $=s=>document.querySelector(s);
 const h=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -84,6 +126,7 @@ const dirty=new Set(), toDel=new Set(); let timer=null;
 function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY));return d&&d.cards?d:null}catch(e){return null}}
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
+/* ---------- облачное хранилище Telegram ---------- */
 const cs={
   keys:()=>new Promise(r=>TG.CloudStorage.getKeys((e,k)=>r(e?[]:k))),
   getMany:ks=>new Promise(r=>TG.CloudStorage.getItems(ks,(e,m)=>r(e?{}:m))),
@@ -117,10 +160,12 @@ async function loadCloud(){
   return {folders,cards};
 }
 
+/* ---------- карточки и интервалы (SM-2) ---------- */
+// поле ru хранит перевод на любом языке (совместимость с сохранёнными данными)
 function newCard(jp,rd,ru,folderId){return {id:uid(),folderId,jp,reading:rd,ru,seen:false,ease:2.5,ivl:0,reps:0,due:0}}
 function seed(){
-  const f={id:uid(),name:'きほん'};
-  const w=[['猫','ねこ','кошка'],['水','みず','вода'],['本','ほん','книга'],['学生','がくせい','студент'],['先生','せんせい','учитель'],['日本','にほん','Япония'],['食べる','たべる','есть'],['行く','いく','идти'],['大きい','おおきい','большой'],['ありがとう','','спасибо']];
+  const f={id:uid(),name:I18N.ru.seedFolder+' / '+I18N.en.seedFolder};
+  const w=[['猫','ねこ','кошка / cat'],['水','みず','вода / water'],['本','ほん','книга / book'],['学生','がくせい','студент / student'],['先生','せんせい','учитель / teacher'],['日本','にほん','Япония / Japan'],['食べる','たべる','есть / eat'],['行く','いく','идти / go'],['大きい','おおきい','большой / big'],['ありがとう','','спасибо / thank you']];
   return {folders:[f],cards:w.map(([a,b,c])=>newCard(a,b,c,f.id))};
 }
 function queueFor(fid){
@@ -141,10 +186,10 @@ function sched(c,q){
   return n;
 }
 function fmt(ms){
-  if(ms<6e4)return '1ふん';
-  if(ms<36e5)return Math.round(ms/6e4)+'ふん';
-  if(ms<DAY)return Math.round(ms/36e5)+'じかん';
-  return Math.round(ms/DAY)+'にち';
+  if(ms<6e4)return '1'+t('sp')+t('min');
+  if(ms<36e5)return Math.round(ms/6e4)+t('sp')+t('min');
+  if(ms<DAY)return Math.round(ms/36e5)+t('sp')+t('hour');
+  return Math.round(ms/DAY)+t('sp')+t('day');
 }
 function rate(q){
   const id=queue[0], i=S.cards.findIndex(c=>c.id===id);
@@ -155,56 +200,67 @@ function rate(q){
 }
 function fname(id){return S.folders.find(f=>f.id===id)?.name||'—'}
 
+/* ---------- экраны ---------- */
 function studyHTML(){
-  const opts=[['all','ぜんぶ'],...S.folders.map(f=>[f.id,f.name])]
-    .map(([v,t])=>`<option value="${v}"${v===studyFolder?' selected':''}>${h(t)}</option>`).join('');
+  const opts=[['all',t('all')],...S.folders.map(f=>[f.id,f.name])]
+    .map(([v,x])=>`<option value="${v}"${v===studyFolder?' selected':''}>${h(x)}</option>`).join('');
   let body;
   if(!queue.length){
-    body=`<div class="empty">ぜんぶ おぼえました ✓<small>あたらしい カードや ふくしゅうは あとで でてきます</small></div>`;
+    body=`<div class="empty">${t('done')}<small>${t('doneSub')}</small></div>`;
   }else{
     const c=S.cards.find(x=>x.id===queue[0]);
     body=`<div class="card"><div class="jp">${h(c.jp)}</div>${revealed?`<div class="rd">${h(c.reading)}</div><div class="ru">${h(c.ru)}</div>`:''}</div>`+
     (revealed
-      ?`<div class="grid">${[[1,'もういちど'],[2,'むずかしい'],[3,'まあまあ'],[4,'かんたん']].map(([q,t])=>
-          `<button data-act="rate" data-q="${q}"><b>${t}</b><small>${q===1?'1ふん':fmt(sched(c,q).due-Date.now())}</small></button>`).join('')}</div>`
-      :`<button class="primary wide" data-act="reveal">こたえを みる <kbd>␣</kbd></button>`);
+      ?`<div class="grid">${[[1,t('again')],[2,t('hard')],[3,t('good')],[4,t('easy')]].map(([q,x])=>
+          `<button data-act="rate" data-q="${q}"><b>${x}</b><small>${q===1?fmt(6e4):fmt(sched(c,q).due-Date.now())}</small></button>`).join('')}</div>`
+      :`<button class="primary wide" data-act="reveal">${t('show')} <kbd>␣</kbd></button>`);
   }
-  return `<div class="bar"><select id="fsel">${opts}</select><span>のこり ${queue.length}</span></div>${body}`;
+  return `<div class="bar"><select id="fsel">${opts}</select><span>${t('left')}: ${queue.length}</span></div>${body}`;
 }
 function dictHTML(){
   const fo=S.folders.map(f=>`<option value="${f.id}">${h(f.name)}</option>`).join('');
   return `<form class="form" id="addf">
-      <input id="f-jp" placeholder="ことば" required>
-      <input id="f-rd" placeholder="よみかた（なくても いい）">
-      <input id="f-ru" placeholder="いみ" required>
-      <div class="row"><select id="f-fo">${fo}</select><button class="primary" type="submit">くわえる</button></div>
+      <input id="f-jp" placeholder="${h(t('word'))}" required>
+      <input id="f-rd" placeholder="${h(t('reading'))}">
+      <input id="f-ru" placeholder="${h(t('meaning'))}" required>
+      <div class="row"><select id="f-fo">${fo}</select><button class="primary" type="submit">${t('add')}</button></div>
     </form>
     <details class="imp">
-      <summary>まとめて とうろく</summary>
-      <textarea id="imp" placeholder="ことば | よみかた | いみ&#10;ことば | よみかた | いみ"></textarea>
-      <button class="primary" data-act="imp">えらんだ フォルダに とうろく</button>
+      <summary>${t('importTitle')}</summary>
+      <textarea id="imp" placeholder="${h(t('importPh'))}"></textarea>
+      <button class="primary" data-act="imp">${t('importBtn')}</button>
     </details>
-    <input class="search" id="q" placeholder="さがす…">
+    <input class="search" id="q" placeholder="${h(t('search'))}">
     <div id="list"></div>`;
 }
 function drawList(){
   const q=($('#q')?.value||'').trim().toLowerCase();
   const rows=S.cards.filter(c=>!q||[c.jp,c.reading,c.ru].some(x=>x.toLowerCase().includes(q)));
   $('#list').innerHTML=rows.length
-    ?`<div class="list">${rows.map(c=>`<div class="item"><div><div><span class="jp sm">${h(c.jp)}</span><span class="rd">${h(c.reading)}</span></div><div class="ru">${h(c.ru)}</div><small>${h(fname(c.folderId))}</small></div><button class="x" data-act="delc" data-id="${c.id}" title="けす">×</button></div>`).join('')}</div>`
-    :`<div class="empty small">なにも ありません</div>`;
+    ?`<div class="list">${rows.map(c=>`<div class="item"><div><div><span class="jp sm">${h(c.jp)}</span><span class="rd">${h(c.reading)}</span></div><div class="ru">${h(c.ru)}</div><small>${h(fname(c.folderId))}</small></div><button class="x" data-act="delc" data-id="${c.id}" title="${h(t('delTitle'))}">×</button></div>`).join('')}</div>`
+    :`<div class="empty small">${t('empty')}</div>`;
 }
 function foldersHTML(){
   const now=Date.now();
   const items=S.folders.map(f=>{
     const cs_=S.cards.filter(c=>c.folderId===f.id);
     const d=cs_.filter(c=>c.seen&&c.due<=now).length, n=cs_.filter(c=>!c.seen).length;
-    return `<div class="item"><div><div>${h(f.name)}</div><small>${cs_.length} まい · ふくしゅう ${d} · あたらしい ${n}</small></div><button class="x" data-act="delf" data-id="${f.id}" title="フォルダを けす">×</button></div>`;
+    return `<div class="item"><div><div>${h(f.name)}</div><small>${cs_.length} ${t('cards')} · ${d} ${t('due')} · ${n} ${t('newc')}</small></div><button class="x" data-act="delf" data-id="${f.id}" title="${h(t('delFolderTitle'))}">×</button></div>`;
   }).join('');
-  return `<form class="form row" id="addfo"><input id="nf" placeholder="あたらしい フォルダ" required><button class="primary" type="submit">つくる</button></form>
-    <div class="list">${items||'<div class="empty small">フォルダが ありません</div>'}</div>`;
+  return `<form class="form row" id="addfo"><input id="nf" placeholder="${h(t('newFolder'))}" required><button class="primary" type="submit">${t('create')}</button></form>
+    <div class="list">${items||`<div class="empty small">${t('noFolders')}</div>`}</div>`;
+}
+function applyLang(){
+  document.documentElement.lang=L==='ja'?'ja':L;
+  document.title=t('title');
+  $('#title').textContent=t('title');
+  $('#t-study').textContent=t('tStudy');
+  $('#t-dict').textContent=t('tDict');
+  $('#t-folders').textContent=t('tFolders');
+  $('#lang').value=L;
 }
 function render(){
+  applyLang();
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
   const app=$('#app');
   if(view==='study')app.innerHTML=studyHTML();
@@ -212,6 +268,7 @@ function render(){
   else app.innerHTML=foldersHTML();
 }
 
+/* ---------- события ---------- */
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act],[data-v]'); if(!b)return;
   if(b.dataset.v){
@@ -229,8 +286,8 @@ document.addEventListener('click',e=>{
       const [jp,rd,ru]=p.length>=3?p:[p[0],'',p[1]];
       if(jp&&ru){const c=newCard(jp,rd||'',ru,fid);S.cards.push(c);markCard(c.id);n++}
     });
-    if(n){changed();$('#imp').value='';drawList();alert(`${n} こ とうろくしました`)}
-    else alert('かたち：ことば | よみかた | いみ');
+    if(n){changed();$('#imp').value='';drawList();alert(t('importOk')(n)===undefined?'':I18N[L].importOk(n))}
+    else alert(I18N[L].importErr);
   }
   else if(a==='delc'){
     const id=b.dataset.id;
@@ -239,7 +296,7 @@ document.addEventListener('click',e=>{
   }
   else if(a==='delf'){
     const f=S.folders.find(x=>x.id===b.dataset.id); if(!f)return;
-    if(!confirm(`フォルダ「${f.name}」と カードを けしますか？`))return;
+    if(!confirm(I18N[L].confirmDel(f.name)))return;
     S.cards.filter(c=>c.folderId===f.id).forEach(c=>dropKey('c:'+c.id));
     S.cards=S.cards.filter(c=>c.folderId!==f.id);
     S.folders=S.folders.filter(x=>x.id!==f.id); dropKey('f:'+f.id);
@@ -265,6 +322,7 @@ document.addEventListener('submit',e=>{
 document.addEventListener('input',e=>{if(e.target.id==='q')drawList()});
 document.addEventListener('change',e=>{
   if(e.target.id==='fsel'){studyFolder=e.target.value;queue=queueFor(studyFolder);revealed=false;render()}
+  if(e.target.id==='lang'){L=e.target.value;localStorage.setItem(LANG_KEY,L);render()}
 });
 document.addEventListener('keydown',e=>{
   if(view!=='study'||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
@@ -276,6 +334,7 @@ document.addEventListener('visibilitychange',async()=>{
   S=await loadCloud(); queue=queueFor(studyFolder); revealed=false; render();
 });
 
+/* ---------- тема Telegram ---------- */
 function applyTheme(){
   const p=TG.themeParams||{}, st=document.documentElement.style;
   if(p.bg_color)st.setProperty('--bg',p.bg_color);
@@ -289,6 +348,7 @@ function applyTheme(){
   st.setProperty('--tgtop',(top||56)+'px');
 }
 
+/* ---------- старт ---------- */
 async function init(){
   const local=loadLocal();
   if(useCloud){
