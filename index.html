@@ -7,34 +7,22 @@
 <title>Japanese Cards</title>
 <style>
 :root{--bg:#fafafa;--fg:#111;--mut:#888;--line:rgba(127,127,127,.25);--acc:#111;--onacc:#fff;--btn:#fff;--tgtop:0px;color-scheme:light}
-@media (prefers-color-scheme: dark){:root{--bg:#111;--fg:#eee;--mut:#777;--acc:#eee;--onacc:#111;--btn:#1a1a1a;color-scheme:dark}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111;--fg:#eee;--mut:#777;--acc:#eee;--onacc:#111;--btn:#1a1a1a;color-scheme:dark}}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--bg)}
-body{color:var(--fg);font:15px/1.5 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
 button,input,select,textarea{font:inherit;color:var(--fg)}
 button{cursor:pointer}
 input,select,textarea{background:var(--btn);border:1px solid var(--line);border-radius:8px;padding:10px 12px;outline:none;min-width:0;width:100%}
-.wrap{max-width:560px;margin:0 auto;padding:calc(12px + var(--tgtop)) 16px 60px}
-header{margin-bottom:16px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-#calbtn{background:none;border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:14px;text-align:left;color:var(--fg)}
-#gear{background:none;border:0;font-size:20px;padding:4px 8px;color:var(--fg)}
+input:focus,select:focus,textarea:focus{border-color:var(--mut)}
+.wrap{max-width:560px;margin:0 auto;padding:calc(16px + var(--tgtop)) 16px 60px}
+header{margin-bottom:20px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+h1{font-size:18px;font-weight:600;margin:0;letter-spacing:.02em}
+#lang{width:auto;padding:6px 8px;font-size:13px}
 nav{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--line);padding:4px;border-radius:10px}
 nav button{background:none;border:0;color:var(--mut);padding:8px 0;border-radius:7px}
 nav button.on{background:var(--btn);color:var(--fg)}
-.panel{border:1px solid var(--line);border-radius:12px;background:var(--btn);padding:12px;margin-bottom:14px}
-.panel:empty{display:none}
-.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.calhead b{font-weight:600}
-.calhead button{background:none;border:0;font-size:18px;padding:2px 10px;color:var(--fg)}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:14px}
-.cal .wd{color:var(--mut);font-size:11px;padding-bottom:4px}
-.cal .d{padding:6px 0;border-radius:8px}
-.cal .sun{color:#d0675f}
-.cal .today{background:var(--acc);color:var(--onacc)}
-.calfoot{text-align:center;margin-top:8px}
-.setrow{margin:10px 0}
-.setrow label{display:block;color:var(--mut);font-size:13px;margin-bottom:6px}
 .bar{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--mut);font-size:13px;margin-bottom:16px}
 .bar select{width:auto}
 .card{min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid var(--line);border-radius:16px;background:var(--btn);padding:24px;margin-bottom:16px}
@@ -43,10 +31,10 @@ nav button.on{background:var(--btn);color:var(--fg)}
 .rd{color:var(--mut);margin-top:10px}
 .ru{font-size:19px;margin-top:8px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.grid button{display:flex;flex-direction:column;gap:2px;padding:12px 4px;border:1px solid var(--line);border-radius:10px;background:var(--btn);color:var(--fg)}
+.grid button{display:flex;flex-direction:column;gap:2px;padding:12px 4px;border:1px solid var(--line);border-radius:10px;background:var(--btn)}
 .grid button small{color:var(--mut);font-size:12px}
 .primary{background:var(--acc);color:var(--onacc);border:0;border-radius:10px;padding:12px 16px;width:auto}
-.ghost{background:none;border:1px solid var(--line);border-radius:10px;padding:10px 14px;width:auto;color:var(--fg)}
+.ghost{background:none;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--fg);width:auto}
 .wide{width:100%;padding:14px}
 kbd{font-size:12px;opacity:.6}
 .empty{text-align:center;color:var(--mut);padding:60px 0}
@@ -60,7 +48,7 @@ kbd{font-size:12px;opacity:.6}
 .list{display:flex;flex-direction:column}
 .item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .item small{color:var(--mut);font-size:12px}
-.item .link{flex:1;background:none;border:0;padding:0;text-align:left;color:var(--fg)}
+.item .link{flex:1;background:none;border:0;padding:0;text-align:left}
 .item .rd{display:inline;margin:0 0 0 6px;font-size:13px}
 .item .ru{font-size:15px;margin:2px 0 0}
 .acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
@@ -71,7 +59,6 @@ kbd{font-size:12px;opacity:.6}
 .head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
 .head h2{font-size:17px;margin:0;font-weight:600}
 .back{margin-bottom:12px}
-.errbox{white-space:pre-wrap;font:13px/1.4 monospace;color:#c0392b;padding:12px;border:1px solid #c0392b;border-radius:8px}
 @media(max-width:420px){.grid{grid-template-columns:repeat(2,1fr)}.jp{font-size:44px}}
 </style>
 </head>
@@ -79,75 +66,69 @@ kbd{font-size:12px;opacity:.6}
 <div class="wrap">
   <header>
     <div class="top">
-      <button id="calbtn" data-act="togcal" aria-expanded="false">…</button>
-      <button id="gear" data-act="togset" aria-label="settings">⚙</button>
+      <h1 id="title"></h1>
+      <select id="lang">
+        <option value="ja">にほんご</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+      </select>
     </div>
-    <div id="panel" class="panel"></div>
     <nav>
-      <button data-v="study" class="on" id="t-study">まなぶ</button>
-      <button data-v="dict" id="t-dict">じしょ</button>
-      <button data-v="folders" id="t-folders">フォルダ</button>
+      <button data-v="study" class="on" id="t-study"></button>
+      <button data-v="dict" id="t-dict"></button>
+      <button data-v="folders" id="t-folders"></button>
     </nav>
   </header>
-  <main id="app"><div class="empty">…</div></main>
+  <main id="app"></main>
 </div>
 <script>
-window.onerror=function(msg,src,line){
-  const box=document.getElementById('app');
-  if(box)box.innerHTML='<div class="errbox">Ошибка: '+String(msg)+' (строка '+line+')</div>';
-};
-
 const KEY='jpflash.v1', LANG_KEY='jpflash.lang', DAY=864e5;
-const TG=window.Telegram&&window.Telegram.WebApp;
+const TG=window.Telegram?.WebApp;
 const useCloud=!!(TG&&TG.CloudStorage&&TG.isVersionAtLeast&&TG.isVersionAtLeast('6.9'));
 
-const KANA_MONTHS=['いちがつ','にがつ','さんがつ','しがつ','ごがつ','ろくがつ','しちがつ','はちがつ','くがつ','じゅうがつ','じゅういちがつ','じゅうにがつ'];
-const KANA_WD=['にち','げつ','か','すい','もく','きん','ど'];
-const KANA_WD_FULL=['にちようび','げつようび','かようび','すいようび','もくようび','きんようび','どようび'];
-
+/* ---------- языки ---------- */
 const I18N={
- ja:{tStudy:'まなぶ',tDict:'じしょ',tFolders:'フォルダ',sp:'',min:'ふん',hour:'じかん',day:'にち',
+ ja:{title:'にほんご カード',tStudy:'まなぶ',tDict:'じしょ',tFolders:'フォルダ',sp:'',min:'ふん',hour:'じかん',day:'にち',
   all:'ぜんぶ',left:'のこり',done:'ぜんぶ おぼえました ✓',doneSub:'あたらしい カードや ふくしゅうは あとで でてきます',
   show:'こたえを みる',again:'もういちど',hard:'むずかしい',good:'まあまあ',easy:'かんたん',
   word:'ことば',reading:'よみかた（なくても いい）',meaning:'いみ',add:'くわえる',
   search:'さがす…',empty:'なにも ありません',newFolder:'あたらしい フォルダ',create:'つくる',noFolders:'フォルダが ありません',
   cards:'まい',due:'ふくしゅう',newc:'あたらしい',delTitle:'けす',editTitle:'へんしゅう',delFolderTitle:'フォルダを けす',
   confirmDel:n=>`フォルダ「${n}」と カードを けしますか？`,seedFolder:'きほん',
-  save:'ほぞん',cancel:'やめる',back:'もどる',noCards:'カードが ありません',settings:'せってい',lang:'ことば'},
- ru:{tStudy:'Учить',tDict:'Словарь',tFolders:'Папки',sp:' ',min:'мин',hour:'ч',day:'дн',
+  save:'ほぞん',cancel:'やめる',back:'もどる',noCards:'カードが ありません',folderOk:'フォルダ',
+  importOk:n=>`${n} こ とうろくしました`},
+ ru:{title:'Японский · Карточки',tStudy:'Учить',tDict:'Словарь',tFolders:'Папки',sp:' ',min:'мин',hour:'ч',day:'дн',
   all:'Все папки',left:'В очереди',done:'Всё повторено ✓',doneSub:'Новые карточки и повторы появятся позже',
   show:'Показать ответ',again:'Снова',hard:'Трудно',good:'Хорошо',easy:'Легко',
   word:'Слово (漢字 / かな)',reading:'Чтение (необязательно)',meaning:'Перевод',add:'Добавить',
   search:'Поиск…',empty:'Пусто',newFolder:'Новая папка',create:'Создать',noFolders:'Папок нет',
   cards:'карточек',due:'к повтору',newc:'новых',delTitle:'Удалить',editTitle:'Изменить',delFolderTitle:'Удалить папку',
   confirmDel:n=>`Удалить папку «${n}» и все её карточки?`,seedFolder:'Базовые',
-  save:'Сохранить',cancel:'Отмена',back:'Назад',noCards:'Карточек нет',settings:'Настройки',lang:'Язык'},
- en:{tStudy:'Study',tDict:'Dictionary',tFolders:'Folders',sp:' ',min:'min',hour:'h',day:'d',
+  save:'Сохранить',cancel:'Отмена',back:'Назад',noCards:'Карточек нет',folderOk:'Папка'},
+ en:{title:'Japanese · Cards',tStudy:'Study',tDict:'Dictionary',tFolders:'Folders',sp:' ',min:'min',hour:'h',day:'d',
   all:'All folders',left:'In queue',done:'All reviewed ✓',doneSub:'New cards and reviews will appear later',
   show:'Show answer',again:'Again',hard:'Hard',good:'Good',easy:'Easy',
   word:'Word (漢字 / かな)',reading:'Reading (optional)',meaning:'Meaning',add:'Add',
   search:'Search…',empty:'Nothing here',newFolder:'New folder',create:'Create',noFolders:'No folders',
   cards:'cards',due:'due',newc:'new',delTitle:'Delete',editTitle:'Edit',delFolderTitle:'Delete folder',
   confirmDel:n=>`Delete folder "${n}" and all its cards?`,seedFolder:'Basics',
-  save:'Save',cancel:'Cancel',back:'Back',noCards:'No cards',settings:'Settings',lang:'Language'}
+  save:'Save',cancel:'Cancel',back:'Back',noCards:'No cards',folderOk:'Folder'}
 };
 let L=localStorage.getItem(LANG_KEY)||'ru';
-const t=k=>(I18N[L]&&I18N[L][k])||I18N.en[k];
+const t=k=>(I18N[L]&&I18N[L][k])??I18N.en[k];
 
+/* ---------- утилиты ---------- */
 const $=s=>document.querySelector(s);
-const h=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const h=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const uid=()=>Math.random().toString(36).slice(2,9);
 
 let S={folders:[],cards:[]};
 let view='study', studyFolder='all', queue=[], revealed=false;
 let openFolder=null, editing=null, qv='';
-let calOpen=false, setOpen=false;
-const now0=new Date(); let calY=now0.getFullYear(), calM=now0.getMonth();
 const dirty=new Set(), toDel=new Set(); let timer=null;
 
 function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY));return d&&d.cards?d:null}catch(e){return null}}
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function withTimeout(p,ms){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))])}
 
 /* ---------- облачное хранилище Telegram ---------- */
 const cs={
@@ -159,4 +140,300 @@ const cs={
 function markCard(id){toDel.delete('c:'+id);dirty.add('c:'+id)}
 function markFolder(id){toDel.delete('f:'+id);dirty.add('f:'+id)}
 function dropKey(k){dirty.delete(k);toDel.add(k)}
-function
+function changed(){saveLocal();if(useCloud){clearTimeout(timer);timer=setTimeout(flush,400)}}
+async function flush(){
+  if(!useCloud)return;
+  const up=[...dirty], rm=[...toDel]; dirty.clear(); toDel.clear();
+  for(const k of up){
+    const id=k.slice(2), o=(k[0]==='c'?S.cards:S.folders).find(x=>x.id===id);
+    if(!o)continue;
+    if(!await cs.set(k,JSON.stringify(o)))dirty.add(k);
+  }
+  for(const k of rm){if(!await cs.del(k))toDel.add(k)}
+  if(dirty.size||toDel.size)setTimeout(flush,2000);
+}
+async function loadCloud(){
+  const ks=(await cs.keys()).filter(k=>/^[cf]:/.test(k));
+  const folders=[], cards=[];
+  for(let i=0;i<ks.length;i+=100){
+    const m=await cs.getMany(ks.slice(i,i+100));
+    for(const k in m){
+      try{const o=JSON.parse(m[k]);(k[0]==='c'?cards:folders).push(o)}catch(e){}
+    }
+  }
+  return {folders,cards};
+}
+
+/* ---------- карточки и интервалы (SM-2) ---------- */
+function newCard(jp,rd,ru,folderId){return {id:uid(),folderId,jp,reading:rd,ru,seen:false,ease:2.5,ivl:0,reps:0,due:0}}
+function seed(){
+  const f={id:uid(),name:I18N.ru.seedFolder+' / '+I18N.en.seedFolder};
+  const w=[['猫','ねこ','кошка / cat'],['水','みず','вода / water'],['本','ほん','книга / book'],['学生','がくせい','студент / student'],['先生','せんせい','учитель / teacher'],['日本','にほん','Япония / Japan'],['食べる','たべる','есть / eat'],['行く','いく','идти / go'],['大きい','おおきい','большой / big'],['ありがとう','','спасибо / thank you']];
+  return {folders:[f],cards:w.map(([a,b,c])=>newCard(a,b,c,f.id))};
+}
+function queueFor(fid){
+  const now=Date.now(), cs_=S.cards.filter(c=>fid==='all'||c.folderId===fid);
+  const due=cs_.filter(c=>c.seen&&c.due<=now).sort((a,b)=>a.due-b.due).map(c=>c.id);
+  const news=cs_.filter(c=>!c.seen).slice(0,20).map(c=>c.id);
+  return [...due,...news];
+}
+function sched(c,q){
+  const now=Date.now(), n={...c,seen:true};
+  if(q===1){n.reps=0;n.ivl=0;n.due=now+6e4;return n}
+  const g={2:3,3:4,4:5}[q];
+  n.ease=Math.max(1.3,c.ease+0.1-(5-g)*(0.08+(5-g)*0.02));
+  n.reps=c.reps+1;
+  const base=n.reps===1?1:n.reps===2?3:c.ivl*n.ease;
+  n.ivl=Math.max(1,Math.round(base*{2:1.2,3:1,4:1.3}[q]));
+  n.due=now+n.ivl*DAY;
+  return n;
+}
+function fmt(ms){
+  if(ms<6e4)return '1'+t('sp')+t('min');
+  if(ms<36e5)return Math.round(ms/6e4)+t('sp')+t('min');
+  if(ms<DAY)return Math.round(ms/36e5)+t('sp')+t('hour');
+  return Math.round(ms/DAY)+t('sp')+t('day');
+}
+function rate(q){
+  const id=queue[0], i=S.cards.findIndex(c=>c.id===id);
+  if(i<0)return;
+  S.cards[i]=sched(S.cards[i],q); markCard(id); changed();
+  queue.shift(); if(q===1)queue.push(id);
+  revealed=false; render();
+}
+function fname(id){return S.folders.find(f=>f.id===id)?.name||'—'}
+
+/* ---------- HTML-блоки ---------- */
+function folderOptions(sel){
+  return S.folders.map(f=>`<option value="${f.id}"${f.id===sel?' selected':''}>${h(f.name)}</option>`).join('');
+}
+function addCardHTML(fixed){
+  const fo=fixed
+    ?`<input type="hidden" id="f-fo" value="${h(fixed)}">`
+    :`<select id="f-fo">${folderOptions()}</select>`;
+  return `<form class="form" id="addf">
+      <input id="f-jp" placeholder="${h(t('word'))}" required>
+      <input id="f-rd" placeholder="${h(t('reading'))}">
+      <input id="f-ru" placeholder="${h(t('meaning'))}" required>
+      <div class="row">${fo}<button class="primary" type="submit">${t('add')}</button></div>
+    </form>`;
+}
+function cardEditHTML(c){
+  return `<form class="edit" data-form="card" data-id="${c.id}">
+      <input name="jp" value="${h(c.jp)}" required>
+      <input name="rd" value="${h(c.reading)}" placeholder="${h(t('reading'))}">
+      <input name="ru" value="${h(c.ru)}" required>
+      <select name="fo">${folderOptions(c.folderId)}</select>
+      <div class="row"><button class="primary" type="submit">${t('save')}</button><button type="button" class="ghost" data-act="cancel">${t('cancel')}</button></div>
+    </form>`;
+}
+function folderEditHTML(f){
+  return `<form class="edit" data-form="folder" data-id="${f.id}">
+      <input name="name" value="${h(f.name)}" required>
+      <div class="row"><button class="primary" type="submit">${t('save')}</button><button type="button" class="ghost" data-act="cancel">${t('cancel')}</button></div>
+    </form>`;
+}
+function rowsHTML(rows,showFolder){
+  return rows.map(c=>editing&&editing.k==='c'&&editing.id===c.id
+    ?cardEditHTML(c)
+    :`<div class="item"><div><div><span class="jp sm">${h(c.jp)}</span><span class="rd">${h(c.reading)}</span></div><div class="ru">${h(c.ru)}</div>${showFolder?`<small>${h(fname(c.folderId))}</small>`:''}</div><div class="acts"><button class="iconbtn" data-act="editc" data-id="${c.id}" title="${h(t('editTitle'))}">✎</button><button class="x" data-act="delc" data-id="${c.id}" title="${h(t('delTitle'))}">×</button></div></div>`
+  ).join('');
+}
+
+/* ---------- экраны ---------- */
+function studyHTML(){
+  const opts=[['all',t('all')],...S.folders.map(f=>[f.id,f.name])]
+    .map(([v,x])=>`<option value="${v}"${v===studyFolder?' selected':''}>${h(x)}</option>`).join('');
+  let body;
+  if(!queue.length){
+    body=`<div class="empty">${t('done')}<small>${t('doneSub')}</small></div>`;
+  }else{
+    const c=S.cards.find(x=>x.id===queue[0]);
+    body=`<div class="card"><div class="jp">${h(c.jp)}</div>${revealed?`<div class="rd">${h(c.reading)}</div><div class="ru">${h(c.ru)}</div>`:''}</div>`+
+    (revealed
+      ?`<div class="grid">${[[1,t('again')],[2,t('hard')],[3,t('good')],[4,t('easy')]].map(([q,x])=>
+          `<button data-act="rate" data-q="${q}"><b>${x}</b><small>${q===1?fmt(6e4):fmt(sched(c,q).due-Date.now())}</small></button>`).join('')}</div>`
+      :`<button class="primary wide" data-act="reveal">${t('show')} <kbd>␣</kbd></button>`);
+  }
+  return `<div class="bar"><select id="fsel">${opts}</select><span>${t('left')}: ${queue.length}</span></div>${body}`;
+}
+function dictHTML(){
+  return `${addCardHTML()}
+    <input class="search" id="q" placeholder="${h(t('search'))}" value="${h(qv)}">
+    <div id="list"></div>`;
+}
+function drawList(){
+  const q=qv.trim().toLowerCase();
+  const rows=S.cards.filter(c=>!q||[c.jp,c.reading,c.ru].some(x=>x.toLowerCase().includes(q)));
+  $('#list').innerHTML=rows.length
+    ?`<div class="list">${rowsHTML(rows,true)}</div>`
+    :`<div class="empty small">${t('empty')}</div>`;
+}
+function folderDetailHTML(f){
+  const cs_=S.cards.filter(c=>c.folderId===f.id);
+  const head=editing&&editing.k==='f'&&editing.id===f.id
+    ?folderEditHTML(f)
+    :`<div class="head"><h2>${h(f.name)}</h2><div class="acts"><button class="iconbtn" data-act="editf" data-id="${f.id}" title="${h(t('editTitle'))}">✎</button><button class="x" data-act="delf" data-id="${f.id}" title="${h(t('delFolderTitle'))}">×</button></div></div>`;
+  return `<div class="back"><button class="ghost" data-act="back">← ${t('back')}</button></div>
+    ${head}
+    ${addCardHTML(f.id)}
+    <div class="list">${cs_.length?rowsHTML(cs_,false):`<div class="empty small">${t('noCards')}</div>`}</div>`;
+}
+function foldersHTML(){
+  const now=Date.now();
+  const items=S.folders.map(f=>{
+    if(editing&&editing.k==='f'&&editing.id===f.id)return folderEditHTML(f);
+    const cs_=S.cards.filter(c=>c.folderId===f.id);
+    const d=cs_.filter(c=>c.seen&&c.due<=now).length, n=cs_.filter(c=>!c.seen).length;
+    return `<div class="item"><button class="link" data-act="open" data-id="${f.id}"><div>${h(f.name)}</div><small>${cs_.length} ${t('cards')} · ${d} ${t('due')} · ${n} ${t('newc')}</small></button><div class="acts"><button class="iconbtn" data-act="editf" data-id="${f.id}" title="${h(t('editTitle'))}">✎</button><button class="x" data-act="delf" data-id="${f.id}" title="${h(t('delFolderTitle'))}">×</button></div></div>`;
+  }).join('');
+  return `<form class="form row" id="addfo"><input id="nf" placeholder="${h(t('newFolder'))}" required><button class="primary" type="submit">${t('create')}</button></form>
+    <div class="list">${items||`<div class="empty small">${t('noFolders')}</div>`}</div>`;
+}
+function applyLang(){
+  document.documentElement.lang=L==='ja'?'ja':L;
+  document.title=t('title');
+  $('#title').textContent=t('title');
+  $('#t-study').textContent=t('tStudy');
+  $('#t-dict').textContent=t('tDict');
+  $('#t-folders').textContent=t('tFolders');
+  $('#lang').value=L;
+}
+function render(){
+  applyLang();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  const app=$('#app');
+  if(view==='study'){app.innerHTML=studyHTML();}
+  else if(view==='dict'){app.innerHTML=dictHTML();drawList();}
+  else{
+    const f=S.folders.find(x=>x.id===openFolder);
+    app.innerHTML=f?folderDetailHTML(f):foldersHTML();
+  }
+}
+
+/* ---------- события ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act],[data-v]'); if(!b)return;
+  if(b.dataset.v){
+    view=b.dataset.v; openFolder=null; editing=null;
+    if(view==='study'){queue=queueFor(studyFolder);revealed=false}
+    render(); return;
+  }
+  const a=b.dataset.act;
+  if(a==='reveal'){revealed=true;render()}
+  else if(a==='rate')rate(+b.dataset.q);
+  else if(a==='editc'){editing={k:'c',id:b.dataset.id};render()}
+  else if(a==='editf'){editing={k:'f',id:b.dataset.id};render()}
+  else if(a==='cancel'){editing=null;render()}
+  else if(a==='open'){openFolder=b.dataset.id;editing=null;render()}
+  else if(a==='back'){openFolder=null;editing=null;render()}
+  else if(a==='delc'){
+    const id=b.dataset.id;
+    S.cards=S.cards.filter(c=>c.id!==id);
+    queue=queue.filter(i=>i!==id); dropKey('c:'+id);
+    if(editing&&editing.id===id)editing=null;
+    changed(); render();
+  }
+  else if(a==='delf'){
+    const f=S.folders.find(x=>x.id===b.dataset.id); if(!f)return;
+    const doDelete=()=>{
+      S.cards.filter(c=>c.folderId===f.id).forEach(c=>dropKey('c:'+c.id));
+      S.cards=S.cards.filter(c=>c.folderId!==f.id);
+      S.folders=S.folders.filter(x=>x.id!==f.id); dropKey('f:'+f.id);
+      if(studyFolder===f.id)studyFolder='all';
+      if(openFolder===f.id)openFolder=null;
+      editing=null;
+      queue=queueFor(studyFolder); changed(); render();
+    };
+    const msg=I18N[L].confirmDel(f.name);
+    if(useCloud&&TG.showConfirm)TG.showConfirm(msg,ok=>{if(ok)doDelete()});
+    else if(confirm(msg))doDelete();
+  }
+});
+document.addEventListener('submit',e=>{
+  e.preventDefault();
+  const form=e.target;
+  if(form.dataset.form){
+    const fd=new FormData(form), id=form.dataset.id;
+    if(form.dataset.form==='card'){
+      const c=S.cards.find(x=>x.id===id); if(!c)return;
+      const jp=String(fd.get('jp')||'').trim(), ru=String(fd.get('ru')||'').trim();
+      if(!jp||!ru)return;
+      c.jp=jp; c.reading=String(fd.get('rd')||'').trim(); c.ru=ru; c.folderId=String(fd.get('fo'));
+      markCard(c.id);
+    }else{
+      const f=S.folders.find(x=>x.id===id); if(!f)return;
+      const name=String(fd.get('name')||'').trim(); if(!name)return;
+      f.name=name; markFolder(f.id);
+    }
+    editing=null; changed();
+    queue=queueFor(studyFolder);
+    render(); return;
+  }
+  if(form.id==='addf'){
+    const jp=$('#f-jp').value.trim(), ru=$('#f-ru').value.trim();
+    if(!jp||!ru)return;
+    const c=newCard(jp,$('#f-rd').value.trim(),ru,$('#f-fo').value);
+    S.cards.push(c); markCard(c.id); changed();
+    render();
+    $('#f-jp')?.focus();
+  }else if(form.id==='addfo'){
+    const n=$('#nf').value.trim(); if(!n)return;
+    const f={id:uid(),name:n};
+    S.folders.push(f); markFolder(f.id); changed(); render();
+  }
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){qv=e.target.value;drawList()}
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='fsel'){studyFolder=e.target.value;queue=queueFor(studyFolder);revealed=false;render()}
+  if(e.target.id==='lang'){L=e.target.value;localStorage.setItem(LANG_KEY,L);render()}
+});
+document.addEventListener('keydown',e=>{
+  if(view!=='study'||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if((e.key===' '||e.key==='Enter')&&queue.length&&!revealed){e.preventDefault();revealed=true;render()}
+  else if(revealed&&/^[1-4]$/.test(e.key)&&queue.length)rate(+e.key);
+});
+document.addEventListener('visibilitychange',async()=>{
+  if(document.hidden||!useCloud||dirty.size||toDel.size)return;
+  S=await loadCloud(); queue=queueFor(studyFolder); revealed=false; render();
+});
+
+/* ---------- тема Telegram ---------- */
+function applyTheme(){
+  const p=TG.themeParams||{}, st=document.documentElement.style;
+  if(p.bg_color)st.setProperty('--bg',p.bg_color);
+  if(p.text_color)st.setProperty('--fg',p.text_color);
+  if(p.hint_color)st.setProperty('--mut',p.hint_color);
+  if(p.secondary_bg_color)st.setProperty('--btn',p.secondary_bg_color);
+  if(p.button_color)st.setProperty('--acc',p.button_color);
+  if(p.button_text_color)st.setProperty('--onacc',p.button_text_color);
+  st.setProperty('color-scheme',TG.colorScheme||'light');
+  const top=(TG.safeAreaInset?.top||0)+(TG.contentSafeAreaInset?.top||0);
+  st.setProperty('--tgtop',(top||56)+'px');
+}
+
+/* ---------- старт ---------- */
+async function init(){
+  const local=loadLocal();
+  if(useCloud){
+    TG.ready(); TG.expand(); applyTheme();
+    S=await loadCloud();
+    if(!S.folders.length&&!S.cards.length){
+      S=local||seed();
+      S.folders.forEach(f=>markFolder(f.id));
+      S.cards.forEach(c=>markCard(c.id));
+      flush();
+    }
+  }else{
+    S=local||seed();
+  }
+  saveLocal();
+  queue=queueFor(studyFolder);
+  render();
+}
+init();
+</script>
+</body>
+</html>
