@@ -118,6 +118,7 @@ const t=k=>(I18N[L]&&I18N[L][k])??I18N.en[k];
 const $=s=>document.querySelector(s);
 const h=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const uid=()=>Math.random().toString(36).slice(2,9);
+function note(text){ if(useCloud&&TG.showAlert)TG.showAlert(text); else alert(text); }
 
 let S={folders:[],cards:[]};
 let view='study', studyFolder='all', queue=[], revealed=false;
@@ -161,7 +162,6 @@ async function loadCloud(){
 }
 
 /* ---------- карточки и интервалы (SM-2) ---------- */
-// поле ru хранит перевод на любом языке (совместимость с сохранёнными данными)
 function newCard(jp,rd,ru,folderId){return {id:uid(),folderId,jp,reading:rd,ru,seen:false,ease:2.5,ivl:0,reps:0,due:0}}
 function seed(){
   const f={id:uid(),name:I18N.ru.seedFolder+' / '+I18N.en.seedFolder};
@@ -286,8 +286,8 @@ document.addEventListener('click',e=>{
       const [jp,rd,ru]=p.length>=3?p:[p[0],'',p[1]];
       if(jp&&ru){const c=newCard(jp,rd||'',ru,fid);S.cards.push(c);markCard(c.id);n++}
     });
-    if(n){changed();$('#imp').value='';drawList();alert(t('importOk')(n)===undefined?'':I18N[L].importOk(n))}
-    else alert(I18N[L].importErr);
+    if(n){changed();$('#imp').value='';drawList();note(I18N[L].importOk(n))}
+    else note(I18N[L].importErr);
   }
   else if(a==='delc'){
     const id=b.dataset.id;
@@ -296,12 +296,16 @@ document.addEventListener('click',e=>{
   }
   else if(a==='delf'){
     const f=S.folders.find(x=>x.id===b.dataset.id); if(!f)return;
-    if(!confirm(I18N[L].confirmDel(f.name)))return;
-    S.cards.filter(c=>c.folderId===f.id).forEach(c=>dropKey('c:'+c.id));
-    S.cards=S.cards.filter(c=>c.folderId!==f.id);
-    S.folders=S.folders.filter(x=>x.id!==f.id); dropKey('f:'+f.id);
-    if(studyFolder===f.id)studyFolder='all';
-    queue=queueFor(studyFolder); changed(); render();
+    const doDelete=()=>{
+      S.cards.filter(c=>c.folderId===f.id).forEach(c=>dropKey('c:'+c.id));
+      S.cards=S.cards.filter(c=>c.folderId!==f.id);
+      S.folders=S.folders.filter(x=>x.id!==f.id); dropKey('f:'+f.id);
+      if(studyFolder===f.id)studyFolder='all';
+      queue=queueFor(studyFolder); changed(); render();
+    };
+    const msg=I18N[L].confirmDel(f.name);
+    if(useCloud&&TG.showConfirm)TG.showConfirm(msg,ok=>{if(ok)doDelete()});
+    else if(confirm(msg))doDelete();
   }
 });
 document.addEventListener('submit',e=>{
