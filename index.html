@@ -34,6 +34,7 @@ nav button.on{background:var(--btn);color:var(--fg)}
 .grid button{display:flex;flex-direction:column;gap:2px;padding:12px 4px;border:1px solid var(--line);border-radius:10px;background:var(--btn)}
 .grid button small{color:var(--mut);font-size:12px}
 .primary{background:var(--acc);color:var(--onacc);border:0;border-radius:10px;padding:12px 16px;width:auto}
+.ghost{background:none;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--fg);width:auto}
 .wide{width:100%;padding:14px}
 kbd{font-size:12px;opacity:.6}
 .empty{text-align:center;color:var(--mut);padding:60px 0}
@@ -44,16 +45,20 @@ kbd{font-size:12px;opacity:.6}
 .row>*:first-child{flex:1}
 .row select{width:auto;flex:1}
 .search{margin-bottom:12px}
-.imp{margin-bottom:20px;color:var(--mut);font-size:13px}
-.imp summary{cursor:pointer;padding:4px 0}
-.imp textarea{margin:8px 0;min-height:120px;resize:vertical;color:var(--fg)}
 .list{display:flex;flex-direction:column}
 .item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .item small{color:var(--mut);font-size:12px}
+.item .link{flex:1;background:none;border:0;padding:0;text-align:left}
 .item .rd{display:inline;margin:0 0 0 6px;font-size:13px}
 .item .ru{font-size:15px;margin:2px 0 0}
+.acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.iconbtn{background:none;border:0;color:var(--mut);font-size:16px;padding:4px 6px}
+.iconbtn:hover,.x:hover{color:var(--fg)}
 .x{background:none;border:0;color:var(--mut);font-size:20px;padding:4px 8px}
-.x:hover{color:var(--fg)}
+.edit{display:grid;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.head h2{font-size:17px;margin:0;font-weight:600}
+.back{margin-bottom:12px}
 @media(max-width:420px){.grid{grid-template-columns:repeat(2,1fr)}.jp{font-size:44px}}
 </style>
 </head>
@@ -87,29 +92,27 @@ const I18N={
   all:'ぜんぶ',left:'のこり',done:'ぜんぶ おぼえました ✓',doneSub:'あたらしい カードや ふくしゅうは あとで でてきます',
   show:'こたえを みる',again:'もういちど',hard:'むずかしい',good:'まあまあ',easy:'かんたん',
   word:'ことば',reading:'よみかた（なくても いい）',meaning:'いみ',add:'くわえる',
-  importTitle:'まとめて とうろく',importBtn:'えらんだ フォルダに とうろく',importPh:'ことば | よみかた | いみ',
-  importOk:n=>`${n} こ とうろくしました`,importErr:'かたち：ことば | よみかた | いみ',
   search:'さがす…',empty:'なにも ありません',newFolder:'あたらしい フォルダ',create:'つくる',noFolders:'フォルダが ありません',
-  cards:'まい',due:'ふくしゅう',newc:'あたらしい',delTitle:'けす',delFolderTitle:'フォルダを けす',
-  confirmDel:n=>`フォルダ「${n}」と カードを けしますか？`,seedFolder:'きほん'},
+  cards:'まい',due:'ふくしゅう',newc:'あたらしい',delTitle:'けす',editTitle:'へんしゅう',delFolderTitle:'フォルダを けす',
+  confirmDel:n=>`フォルダ「${n}」と カードを けしますか？`,seedFolder:'きほん',
+  save:'ほぞん',cancel:'やめる',back:'もどる',noCards:'カードが ありません',folderOk:'フォルダ',
+  importOk:n=>`${n} こ とうろくしました`},
  ru:{title:'Японский · Карточки',tStudy:'Учить',tDict:'Словарь',tFolders:'Папки',sp:' ',min:'мин',hour:'ч',day:'дн',
   all:'Все папки',left:'В очереди',done:'Всё повторено ✓',doneSub:'Новые карточки и повторы появятся позже',
   show:'Показать ответ',again:'Снова',hard:'Трудно',good:'Хорошо',easy:'Легко',
   word:'Слово (漢字 / かな)',reading:'Чтение (необязательно)',meaning:'Перевод',add:'Добавить',
-  importTitle:'Импорт списком',importBtn:'Импортировать в выбранную папку',importPh:'слово | чтение | перевод',
-  importOk:n=>`Добавлено слов: ${n}`,importErr:'Формат: слово | чтение | перевод',
   search:'Поиск…',empty:'Пусто',newFolder:'Новая папка',create:'Создать',noFolders:'Папок нет',
-  cards:'карточек',due:'к повтору',newc:'новых',delTitle:'Удалить',delFolderTitle:'Удалить папку',
-  confirmDel:n=>`Удалить папку «${n}» и все её карточки?`,seedFolder:'Базовые'},
+  cards:'карточек',due:'к повтору',newc:'новых',delTitle:'Удалить',editTitle:'Изменить',delFolderTitle:'Удалить папку',
+  confirmDel:n=>`Удалить папку «${n}» и все её карточки?`,seedFolder:'Базовые',
+  save:'Сохранить',cancel:'Отмена',back:'Назад',noCards:'Карточек нет',folderOk:'Папка'},
  en:{title:'Japanese · Cards',tStudy:'Study',tDict:'Dictionary',tFolders:'Folders',sp:' ',min:'min',hour:'h',day:'d',
   all:'All folders',left:'In queue',done:'All reviewed ✓',doneSub:'New cards and reviews will appear later',
   show:'Show answer',again:'Again',hard:'Hard',good:'Good',easy:'Easy',
   word:'Word (漢字 / かな)',reading:'Reading (optional)',meaning:'Meaning',add:'Add',
-  importTitle:'Bulk import',importBtn:'Import into selected folder',importPh:'word | reading | meaning',
-  importOk:n=>`Added words: ${n}`,importErr:'Format: word | reading | meaning',
   search:'Search…',empty:'Nothing here',newFolder:'New folder',create:'Create',noFolders:'No folders',
-  cards:'cards',due:'due',newc:'new',delTitle:'Delete',delFolderTitle:'Delete folder',
-  confirmDel:n=>`Delete folder "${n}" and all its cards?`,seedFolder:'Basics'}
+  cards:'cards',due:'due',newc:'new',delTitle:'Delete',editTitle:'Edit',delFolderTitle:'Delete folder',
+  confirmDel:n=>`Delete folder "${n}" and all its cards?`,seedFolder:'Basics',
+  save:'Save',cancel:'Cancel',back:'Back',noCards:'No cards',folderOk:'Folder'}
 };
 let L=localStorage.getItem(LANG_KEY)||'ru';
 const t=k=>(I18N[L]&&I18N[L][k])??I18N.en[k];
@@ -118,10 +121,10 @@ const t=k=>(I18N[L]&&I18N[L][k])??I18N.en[k];
 const $=s=>document.querySelector(s);
 const h=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const uid=()=>Math.random().toString(36).slice(2,9);
-function note(text){ if(useCloud&&TG.showAlert)TG.showAlert(text); else alert(text); }
 
 let S={folders:[],cards:[]};
 let view='study', studyFolder='all', queue=[], revealed=false;
+let openFolder=null, editing=null, qv='';
 const dirty=new Set(), toDel=new Set(); let timer=null;
 
 function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY));return d&&d.cards?d:null}catch(e){return null}}
@@ -200,6 +203,43 @@ function rate(q){
 }
 function fname(id){return S.folders.find(f=>f.id===id)?.name||'—'}
 
+/* ---------- HTML-блоки ---------- */
+function folderOptions(sel){
+  return S.folders.map(f=>`<option value="${f.id}"${f.id===sel?' selected':''}>${h(f.name)}</option>`).join('');
+}
+function addCardHTML(fixed){
+  const fo=fixed
+    ?`<input type="hidden" id="f-fo" value="${h(fixed)}">`
+    :`<select id="f-fo">${folderOptions()}</select>`;
+  return `<form class="form" id="addf">
+      <input id="f-jp" placeholder="${h(t('word'))}" required>
+      <input id="f-rd" placeholder="${h(t('reading'))}">
+      <input id="f-ru" placeholder="${h(t('meaning'))}" required>
+      <div class="row">${fo}<button class="primary" type="submit">${t('add')}</button></div>
+    </form>`;
+}
+function cardEditHTML(c){
+  return `<form class="edit" data-form="card" data-id="${c.id}">
+      <input name="jp" value="${h(c.jp)}" required>
+      <input name="rd" value="${h(c.reading)}" placeholder="${h(t('reading'))}">
+      <input name="ru" value="${h(c.ru)}" required>
+      <select name="fo">${folderOptions(c.folderId)}</select>
+      <div class="row"><button class="primary" type="submit">${t('save')}</button><button type="button" class="ghost" data-act="cancel">${t('cancel')}</button></div>
+    </form>`;
+}
+function folderEditHTML(f){
+  return `<form class="edit" data-form="folder" data-id="${f.id}">
+      <input name="name" value="${h(f.name)}" required>
+      <div class="row"><button class="primary" type="submit">${t('save')}</button><button type="button" class="ghost" data-act="cancel">${t('cancel')}</button></div>
+    </form>`;
+}
+function rowsHTML(rows,showFolder){
+  return rows.map(c=>editing&&editing.k==='c'&&editing.id===c.id
+    ?cardEditHTML(c)
+    :`<div class="item"><div><div><span class="jp sm">${h(c.jp)}</span><span class="rd">${h(c.reading)}</span></div><div class="ru">${h(c.ru)}</div>${showFolder?`<small>${h(fname(c.folderId))}</small>`:''}</div><div class="acts"><button class="iconbtn" data-act="editc" data-id="${c.id}" title="${h(t('editTitle'))}">✎</button><button class="x" data-act="delc" data-id="${c.id}" title="${h(t('delTitle'))}">×</button></div></div>`
+  ).join('');
+}
+
 /* ---------- экраны ---------- */
 function studyHTML(){
   const opts=[['all',t('all')],...S.folders.map(f=>[f.id,f.name])]
@@ -218,34 +258,34 @@ function studyHTML(){
   return `<div class="bar"><select id="fsel">${opts}</select><span>${t('left')}: ${queue.length}</span></div>${body}`;
 }
 function dictHTML(){
-  const fo=S.folders.map(f=>`<option value="${f.id}">${h(f.name)}</option>`).join('');
-  return `<form class="form" id="addf">
-      <input id="f-jp" placeholder="${h(t('word'))}" required>
-      <input id="f-rd" placeholder="${h(t('reading'))}">
-      <input id="f-ru" placeholder="${h(t('meaning'))}" required>
-      <div class="row"><select id="f-fo">${fo}</select><button class="primary" type="submit">${t('add')}</button></div>
-    </form>
-    <details class="imp">
-      <summary>${t('importTitle')}</summary>
-      <textarea id="imp" placeholder="${h(t('importPh'))}"></textarea>
-      <button class="primary" data-act="imp">${t('importBtn')}</button>
-    </details>
-    <input class="search" id="q" placeholder="${h(t('search'))}">
+  return `${addCardHTML()}
+    <input class="search" id="q" placeholder="${h(t('search'))}" value="${h(qv)}">
     <div id="list"></div>`;
 }
 function drawList(){
-  const q=($('#q')?.value||'').trim().toLowerCase();
+  const q=qv.trim().toLowerCase();
   const rows=S.cards.filter(c=>!q||[c.jp,c.reading,c.ru].some(x=>x.toLowerCase().includes(q)));
   $('#list').innerHTML=rows.length
-    ?`<div class="list">${rows.map(c=>`<div class="item"><div><div><span class="jp sm">${h(c.jp)}</span><span class="rd">${h(c.reading)}</span></div><div class="ru">${h(c.ru)}</div><small>${h(fname(c.folderId))}</small></div><button class="x" data-act="delc" data-id="${c.id}" title="${h(t('delTitle'))}">×</button></div>`).join('')}</div>`
+    ?`<div class="list">${rowsHTML(rows,true)}</div>`
     :`<div class="empty small">${t('empty')}</div>`;
+}
+function folderDetailHTML(f){
+  const cs_=S.cards.filter(c=>c.folderId===f.id);
+  const head=editing&&editing.k==='f'&&editing.id===f.id
+    ?folderEditHTML(f)
+    :`<div class="head"><h2>${h(f.name)}</h2><div class="acts"><button class="iconbtn" data-act="editf" data-id="${f.id}" title="${h(t('editTitle'))}">✎</button><button class="x" data-act="delf" data-id="${f.id}" title="${h(t('delFolderTitle'))}">×</button></div></div>`;
+  return `<div class="back"><button class="ghost" data-act="back">← ${t('back')}</button></div>
+    ${head}
+    ${addCardHTML(f.id)}
+    <div class="list">${cs_.length?rowsHTML(cs_,false):`<div class="empty small">${t('noCards')}</div>`}</div>`;
 }
 function foldersHTML(){
   const now=Date.now();
   const items=S.folders.map(f=>{
+    if(editing&&editing.k==='f'&&editing.id===f.id)return folderEditHTML(f);
     const cs_=S.cards.filter(c=>c.folderId===f.id);
     const d=cs_.filter(c=>c.seen&&c.due<=now).length, n=cs_.filter(c=>!c.seen).length;
-    return `<div class="item"><div><div>${h(f.name)}</div><small>${cs_.length} ${t('cards')} · ${d} ${t('due')} · ${n} ${t('newc')}</small></div><button class="x" data-act="delf" data-id="${f.id}" title="${h(t('delFolderTitle'))}">×</button></div>`;
+    return `<div class="item"><button class="link" data-act="open" data-id="${f.id}"><div>${h(f.name)}</div><small>${cs_.length} ${t('cards')} · ${d} ${t('due')} · ${n} ${t('newc')}</small></button><div class="acts"><button class="iconbtn" data-act="editf" data-id="${f.id}" title="${h(t('editTitle'))}">✎</button><button class="x" data-act="delf" data-id="${f.id}" title="${h(t('delFolderTitle'))}">×</button></div></div>`;
   }).join('');
   return `<form class="form row" id="addfo"><input id="nf" placeholder="${h(t('newFolder'))}" required><button class="primary" type="submit">${t('create')}</button></form>
     <div class="list">${items||`<div class="empty small">${t('noFolders')}</div>`}</div>`;
@@ -263,36 +303,36 @@ function render(){
   applyLang();
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
   const app=$('#app');
-  if(view==='study')app.innerHTML=studyHTML();
+  if(view==='study'){app.innerHTML=studyHTML();}
   else if(view==='dict'){app.innerHTML=dictHTML();drawList();}
-  else app.innerHTML=foldersHTML();
+  else{
+    const f=S.folders.find(x=>x.id===openFolder);
+    app.innerHTML=f?folderDetailHTML(f):foldersHTML();
+  }
 }
 
 /* ---------- события ---------- */
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act],[data-v]'); if(!b)return;
   if(b.dataset.v){
-    view=b.dataset.v;
+    view=b.dataset.v; openFolder=null; editing=null;
     if(view==='study'){queue=queueFor(studyFolder);revealed=false}
     render(); return;
   }
   const a=b.dataset.act;
   if(a==='reveal'){revealed=true;render()}
   else if(a==='rate')rate(+b.dataset.q);
-  else if(a==='imp'){
-    const fid=$('#f-fo').value; let n=0;
-    $('#imp').value.split('\n').forEach(line=>{
-      const p=line.split(/[|\t]/).map(s=>s.trim());
-      const [jp,rd,ru]=p.length>=3?p:[p[0],'',p[1]];
-      if(jp&&ru){const c=newCard(jp,rd||'',ru,fid);S.cards.push(c);markCard(c.id);n++}
-    });
-    if(n){changed();$('#imp').value='';drawList();note(I18N[L].importOk(n))}
-    else note(I18N[L].importErr);
-  }
+  else if(a==='editc'){editing={k:'c',id:b.dataset.id};render()}
+  else if(a==='editf'){editing={k:'f',id:b.dataset.id};render()}
+  else if(a==='cancel'){editing=null;render()}
+  else if(a==='open'){openFolder=b.dataset.id;editing=null;render()}
+  else if(a==='back'){openFolder=null;editing=null;render()}
   else if(a==='delc'){
     const id=b.dataset.id;
     S.cards=S.cards.filter(c=>c.id!==id);
-    queue=queue.filter(i=>i!==id); dropKey('c:'+id); changed(); drawList();
+    queue=queue.filter(i=>i!==id); dropKey('c:'+id);
+    if(editing&&editing.id===id)editing=null;
+    changed(); render();
   }
   else if(a==='delf'){
     const f=S.folders.find(x=>x.id===b.dataset.id); if(!f)return;
@@ -301,6 +341,8 @@ document.addEventListener('click',e=>{
       S.cards=S.cards.filter(c=>c.folderId!==f.id);
       S.folders=S.folders.filter(x=>x.id!==f.id); dropKey('f:'+f.id);
       if(studyFolder===f.id)studyFolder='all';
+      if(openFolder===f.id)openFolder=null;
+      editing=null;
       queue=queueFor(studyFolder); changed(); render();
     };
     const msg=I18N[L].confirmDel(f.name);
@@ -310,20 +352,40 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('submit',e=>{
   e.preventDefault();
-  if(e.target.id==='addf'){
+  const form=e.target;
+  if(form.dataset.form){
+    const fd=new FormData(form), id=form.dataset.id;
+    if(form.dataset.form==='card'){
+      const c=S.cards.find(x=>x.id===id); if(!c)return;
+      const jp=String(fd.get('jp')||'').trim(), ru=String(fd.get('ru')||'').trim();
+      if(!jp||!ru)return;
+      c.jp=jp; c.reading=String(fd.get('rd')||'').trim(); c.ru=ru; c.folderId=String(fd.get('fo'));
+      markCard(c.id);
+    }else{
+      const f=S.folders.find(x=>x.id===id); if(!f)return;
+      const name=String(fd.get('name')||'').trim(); if(!name)return;
+      f.name=name; markFolder(f.id);
+    }
+    editing=null; changed();
+    queue=queueFor(studyFolder);
+    render(); return;
+  }
+  if(form.id==='addf'){
     const jp=$('#f-jp').value.trim(), ru=$('#f-ru').value.trim();
     if(!jp||!ru)return;
     const c=newCard(jp,$('#f-rd').value.trim(),ru,$('#f-fo').value);
     S.cards.push(c); markCard(c.id); changed();
-    ['#f-jp','#f-rd','#f-ru'].forEach(s=>$(s).value='');
-    $('#f-jp').focus(); drawList();
-  }else if(e.target.id==='addfo'){
+    render();
+    $('#f-jp')?.focus();
+  }else if(form.id==='addfo'){
     const n=$('#nf').value.trim(); if(!n)return;
     const f={id:uid(),name:n};
     S.folders.push(f); markFolder(f.id); changed(); render();
   }
 });
-document.addEventListener('input',e=>{if(e.target.id==='q')drawList()});
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){qv=e.target.value;drawList()}
+});
 document.addEventListener('change',e=>{
   if(e.target.id==='fsel'){studyFolder=e.target.value;queue=queueFor(studyFolder);revealed=false;render()}
   if(e.target.id==='lang'){L=e.target.value;localStorage.setItem(LANG_KEY,L);render()}
