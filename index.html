@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<title>Карточки · 日本語</title>
+<title>にほんご カード</title>
 <style>
 :root{--bg:#fafafa;--fg:#111;--mut:#888;--line:rgba(127,127,127,.25);--acc:#111;--onacc:#fff;--btn:#fff;--tgtop:0px;color-scheme:light}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111;--fg:#eee;--mut:#777;--acc:#eee;--onacc:#111;--btn:#1a1a1a;color-scheme:dark}}
@@ -59,11 +59,11 @@ kbd{font-size:12px;opacity:.6}
 <body>
 <div class="wrap">
   <header>
-    <h1>日本語 <span>карточки</span></h1>
+    <h1>にほんご <span>カード</span></h1>
     <nav>
-      <button data-v="study" class="on">Учить</button>
-      <button data-v="dict">Словарь</button>
-      <button data-v="folders">Папки</button>
+      <button data-v="study" class="on">まなぶ</button>
+      <button data-v="dict">じしょ</button>
+      <button data-v="folders">フォルダ</button>
     </nav>
   </header>
   <main id="app"></main>
@@ -119,7 +119,7 @@ async function loadCloud(){
 
 function newCard(jp,rd,ru,folderId){return {id:uid(),folderId,jp,reading:rd,ru,seen:false,ease:2.5,ivl:0,reps:0,due:0}}
 function seed(){
-  const f={id:uid(),name:'Базовые'};
+  const f={id:uid(),name:'きほん'};
   const w=[['猫','ねこ','кошка'],['水','みず','вода'],['本','ほん','книга'],['学生','がくせい','студент'],['先生','せんせい','учитель'],['日本','にほん','Япония'],['食べる','たべる','есть'],['行く','いく','идти'],['大きい','おおきい','большой'],['ありがとう','','спасибо']];
   return {folders:[f],cards:w.map(([a,b,c])=>newCard(a,b,c,f.id))};
 }
@@ -141,10 +141,10 @@ function sched(c,q){
   return n;
 }
 function fmt(ms){
-  if(ms<6e4)return '1 мин';
-  if(ms<36e5)return Math.round(ms/6e4)+' мин';
-  if(ms<DAY)return Math.round(ms/36e5)+' ч';
-  return Math.round(ms/DAY)+' дн';
+  if(ms<6e4)return '1ふん';
+  if(ms<36e5)return Math.round(ms/6e4)+'ふん';
+  if(ms<DAY)return Math.round(ms/36e5)+'じかん';
+  return Math.round(ms/DAY)+'にち';
 }
 function rate(q){
   const id=queue[0], i=S.cards.findIndex(c=>c.id===id);
@@ -156,53 +156,53 @@ function rate(q){
 function fname(id){return S.folders.find(f=>f.id===id)?.name||'—'}
 
 function studyHTML(){
-  const opts=[['all','Все папки'],...S.folders.map(f=>[f.id,f.name])]
+  const opts=[['all','ぜんぶ'],...S.folders.map(f=>[f.id,f.name])]
     .map(([v,t])=>`<option value="${v}"${v===studyFolder?' selected':''}>${h(t)}</option>`).join('');
   let body;
   if(!queue.length){
-    body=`<div class="empty">Всё повторено ✓<small>Новые карточки и повторы появятся позже</small></div>`;
+    body=`<div class="empty">ぜんぶ おぼえました ✓<small>あたらしい カードや ふくしゅうは あとで でてきます</small></div>`;
   }else{
     const c=S.cards.find(x=>x.id===queue[0]);
     body=`<div class="card"><div class="jp">${h(c.jp)}</div>${revealed?`<div class="rd">${h(c.reading)}</div><div class="ru">${h(c.ru)}</div>`:''}</div>`+
     (revealed
-      ?`<div class="grid">${[[1,'Снова'],[2,'Трудно'],[3,'Хорошо'],[4,'Легко']].map(([q,t])=>
-          `<button data-act="rate" data-q="${q}"><b>${t}</b><small>${q===1?'1 мин':fmt(sched(c,q).due-Date.now())}</small></button>`).join('')}</div>`
-      :`<button class="primary wide" data-act="reveal">Показать ответ <kbd>␣</kbd></button>`);
+      ?`<div class="grid">${[[1,'もういちど'],[2,'むずかしい'],[3,'まあまあ'],[4,'かんたん']].map(([q,t])=>
+          `<button data-act="rate" data-q="${q}"><b>${t}</b><small>${q===1?'1ふん':fmt(sched(c,q).due-Date.now())}</small></button>`).join('')}</div>`
+      :`<button class="primary wide" data-act="reveal">こたえを みる <kbd>␣</kbd></button>`);
   }
-  return `<div class="bar"><select id="fsel">${opts}</select><span>${queue.length} в очереди</span></div>${body}`;
+  return `<div class="bar"><select id="fsel">${opts}</select><span>のこり ${queue.length}</span></div>${body}`;
 }
 function dictHTML(){
   const fo=S.folders.map(f=>`<option value="${f.id}">${h(f.name)}</option>`).join('');
   return `<form class="form" id="addf">
-      <input id="f-jp" placeholder="Слово (漢字 / かな)" required>
-      <input id="f-rd" placeholder="Чтение (необязательно)">
-      <input id="f-ru" placeholder="Перевод" required>
-      <div class="row"><select id="f-fo">${fo}</select><button class="primary" type="submit">Добавить</button></div>
+      <input id="f-jp" placeholder="ことば" required>
+      <input id="f-rd" placeholder="よみかた（なくても いい）">
+      <input id="f-ru" placeholder="いみ" required>
+      <div class="row"><select id="f-fo">${fo}</select><button class="primary" type="submit">くわえる</button></div>
     </form>
     <details class="imp">
-      <summary>Импорт списком</summary>
-      <textarea id="imp" placeholder="猫 | ねこ | кошка&#10;水 | みず | вода&#10;本 | книга"></textarea>
-      <button class="primary" data-act="imp">Импортировать в выбранную папку</button>
+      <summary>まとめて とうろく</summary>
+      <textarea id="imp" placeholder="ことば | よみかた | いみ&#10;ことば | よみかた | いみ"></textarea>
+      <button class="primary" data-act="imp">えらんだ フォルダに とうろく</button>
     </details>
-    <input class="search" id="q" placeholder="Поиск…">
+    <input class="search" id="q" placeholder="さがす…">
     <div id="list"></div>`;
 }
 function drawList(){
   const q=($('#q')?.value||'').trim().toLowerCase();
   const rows=S.cards.filter(c=>!q||[c.jp,c.reading,c.ru].some(x=>x.toLowerCase().includes(q)));
   $('#list').innerHTML=rows.length
-    ?`<div class="list">${rows.map(c=>`<div class="item"><div><div><span class="jp sm">${h(c.jp)}</span><span class="rd">${h(c.reading)}</span></div><div class="ru">${h(c.ru)}</div><small>${h(fname(c.folderId))}</small></div><button class="x" data-act="delc" data-id="${c.id}" title="Удалить">×</button></div>`).join('')}</div>`
-    :`<div class="empty small">Пусто</div>`;
+    ?`<div class="list">${rows.map(c=>`<div class="item"><div><div><span class="jp sm">${h(c.jp)}</span><span class="rd">${h(c.reading)}</span></div><div class="ru">${h(c.ru)}</div><small>${h(fname(c.folderId))}</small></div><button class="x" data-act="delc" data-id="${c.id}" title="けす">×</button></div>`).join('')}</div>`
+    :`<div class="empty small">なにも ありません</div>`;
 }
 function foldersHTML(){
   const now=Date.now();
   const items=S.folders.map(f=>{
     const cs_=S.cards.filter(c=>c.folderId===f.id);
     const d=cs_.filter(c=>c.seen&&c.due<=now).length, n=cs_.filter(c=>!c.seen).length;
-    return `<div class="item"><div><div>${h(f.name)}</div><small>${cs_.length} карточек · ${d} к повтору · ${n} новых</small></div><button class="x" data-act="delf" data-id="${f.id}" title="Удалить папку">×</button></div>`;
+    return `<div class="item"><div><div>${h(f.name)}</div><small>${cs_.length} まい · ふくしゅう ${d} · あたらしい ${n}</small></div><button class="x" data-act="delf" data-id="${f.id}" title="フォルダを けす">×</button></div>`;
   }).join('');
-  return `<form class="form row" id="addfo"><input id="nf" placeholder="Новая папка" required><button class="primary" type="submit">Создать</button></form>
-    <div class="list">${items||'<div class="empty small">Папок нет</div>'}</div>`;
+  return `<form class="form row" id="addfo"><input id="nf" placeholder="あたらしい フォルダ" required><button class="primary" type="submit">つくる</button></form>
+    <div class="list">${items||'<div class="empty small">フォルダが ありません</div>'}</div>`;
 }
 function render(){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
@@ -229,8 +229,8 @@ document.addEventListener('click',e=>{
       const [jp,rd,ru]=p.length>=3?p:[p[0],'',p[1]];
       if(jp&&ru){const c=newCard(jp,rd||'',ru,fid);S.cards.push(c);markCard(c.id);n++}
     });
-    if(n){changed();$('#imp').value='';drawList();alert(`Добавлено слов: ${n}`)}
-    else alert('Не нашёл слов. Формат: слово | чтение | перевод');
+    if(n){changed();$('#imp').value='';drawList();alert(`${n} こ とうろくしました`)}
+    else alert('かたち：ことば | よみかた | いみ');
   }
   else if(a==='delc'){
     const id=b.dataset.id;
@@ -239,7 +239,7 @@ document.addEventListener('click',e=>{
   }
   else if(a==='delf'){
     const f=S.folders.find(x=>x.id===b.dataset.id); if(!f)return;
-    if(!confirm(`Удалить папку «${f.name}» и все её карточки?`))return;
+    if(!confirm(`フォルダ「${f.name}」と カードを けしますか？`))return;
     S.cards.filter(c=>c.folderId===f.id).forEach(c=>dropKey('c:'+c.id));
     S.cards=S.cards.filter(c=>c.folderId!==f.id);
     S.folders=S.folders.filter(x=>x.id!==f.id); dropKey('f:'+f.id);
@@ -285,7 +285,6 @@ function applyTheme(){
   if(p.button_color)st.setProperty('--acc',p.button_color);
   if(p.button_text_color)st.setProperty('--onacc',p.button_text_color);
   st.setProperty('color-scheme',TG.colorScheme||'light');
-  // отступ под шапку Telegram, чтобы меню не пряталось
   const top=(TG.safeAreaInset?.top||0)+(TG.contentSafeAreaInset?.top||0);
   st.setProperty('--tgtop',(top||56)+'px');
 }
